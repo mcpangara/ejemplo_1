@@ -3,6 +3,9 @@ import 'w3-css/w3.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 
-const PATH_DATOS = "https://jsonplaceholder.typicode.com/todos"
+//const API = "https://jsonplaceholder.typicode.com/todos"
+//const API = "https://api.github.com/users/"
 
-createApp(App).mount('#app')
+const app = createApp(App);
+
+app.mount("#app")
