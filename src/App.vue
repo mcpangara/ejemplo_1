@@ -4,11 +4,19 @@
     export default {
         data(){
             return {
-                serach: null,
+                search: null,
                 result: null,
                 error: null,
                 favorites: new Map()
             };
+        },
+        created(){
+          const savedFavorites = JSON.parse(window.localStorage.getItem("favorites"))
+
+          if (savedFavorites.length){
+              const favorites = new Map(savedFavorites.map(favorite => [favorite.id, favorite]))
+              this.favorites = favorites
+          }
         },
         computed:{
             isFavorite(){
@@ -36,12 +44,17 @@
 
             addFavorites(){
                 this.favorites.set(this.result.id, this.result)
+                this.updateStorage()
             },
 
             removeFavorites(){
                 this.favorites.delete(this.result.id)
+                this.updateStorage()
             },
 
+            updateStorage(){
+                window.localStorage.setItem('favorites', JSON.stringify(this.allFavorites))
+            }
         }
     }
 </script>
@@ -50,14 +63,14 @@
     <!-- Fa<vorites -->
     <div id="favorites" class="w3-container">
         <!-- <div v-for="[, favorite] in favorites"> -->
-        <span v-for="favorite in allFavorites">
-            <a v-bind:href="favorite.blog" target="_blank">
-                <img v-bind:src="favorite.avatar_url" class="w3-round" v-bind:alt="favorite.name">
+        <span v-for="favorite in allFavorites" class=" w3-card-2">
+            <a v-bind:href="favorite.blog" target="_blank" >
+                <img v-bind:src="favorite.avatar_url" class="w3-round w3-hover-shadow" v-bind:alt="favorite.name">
             </a>
         </span>
     </div>
     <br>
-    <main class="w3-display-container">
+    <div class="w3-display-container">
       <div class="w3-container w3-card-4 w3-light-grey">
         <h3>Search User</h3>
         <form v-on:submit.prevent="doSearch">
@@ -72,17 +85,17 @@
 
             <!-- Result -->
             <div v-if="result">
-                <div class="w3-card-4 w3-blue">
-                    <div class="w3-container ">
-                        <a v-if="!isFavorite" href="#" class="w3-button w3-right" @click="addFavorites">Add Favorite <span class="w3-yellow  w3-badge w3-small">+</span></a>
-                        <a v-else href="#" class="w3-button w3-right" @click="removeFavorites">Remove Favorite <span class="w3-red w3-badge w3-small">-</span></a>
-                        <h4>{{ result.name }}</h4>
+                <div class="w3-card-4 w3-light-blue">
+                    <div class="w3-container">
+                        <a v-if="!isFavorite" href="#" class="w3-button w3-right" @click="addFavorites">Add Favorite <span class="w3-yellow  w3-badge ">+</span></a>
+                        <a v-else href="#" class="w3-button w3-right" @click="removeFavorites">Remove Favorite <span class="w3-red w3-badge ">-</span></a>
+                        <h4><b>{{ result.name }}</b></h4>
                     </div>
                     <div class="w3-container w3-row">
                         <img v-bind:src="result.avatar_url" class="w3-round w3-quarter" v-bind:alt="result.name">
                         <p class="w3-threequarter">{{ result.bio }}</p>
                     </div>
-                    <div class="w3-container w3-blue">
+                    <div class="w3-container w3-light-blue">
                         <h5><a v-bind:href="result.blog" target="_blank">{{ result.blog }}</a></h5>
                     </div>
                 </div><br>
@@ -91,7 +104,7 @@
             <div id="error" class="w3-red" v-if="error">{{error}}</div>
          </form>
       </div>
-    </main>
+    </div>
 </template>
 
 <style scoped>
